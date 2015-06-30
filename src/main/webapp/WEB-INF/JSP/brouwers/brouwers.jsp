@@ -7,5 +7,12 @@
 <body>
 	<v:menu />
 	<h1>Brouwers</h1>
+	<c:forEach items='${brouwers}' var='brouwer'>
+		<h2>${brouwer.naam}</h2>
+		<p>${brouwer.adres.straat}
+			${brouwer.adres.huisNr}<br> ${brouwer.adres.postcode}
+			${brouwer.adres.gemeente}
+		</p>
+	</c:forEach>
 </body>
 </html>
