@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import be.vdab.dao.BrouwerDAO;
 import be.vdab.entities.Brouwer;
+import be.vdab.valueobjects.Beginnaam;
 
 @Service
 public class BrouwerServiceImpl implements BrouwerService {
@@ -31,6 +32,11 @@ public class BrouwerServiceImpl implements BrouwerService {
 	@Override
 	public List<Brouwer> findByNaam(String beginNaam) {
 		return brouwerDAO.findByNaam(beginNaam);
+	}
+	
+	@Override
+	public List<Brouwer> findByBeginnaam(Beginnaam beginnaam){
+		return brouwerDAO.findByBeginnaam(beginnaam);
 	}
 
 }

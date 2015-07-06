@@ -3,6 +3,7 @@ package be.vdab.services;
 import java.util.List;
 
 import be.vdab.entities.Brouwer;
+import be.vdab.valueobjects.Beginnaam;
 
 public interface BrouwerService {
 	void create(Brouwer brouwer);
@@ -10,4 +11,6 @@ public interface BrouwerService {
 	List<Brouwer> findAll();
 
 	List<Brouwer> findByNaam(String beginNaam);
+	
+	List<Brouwer> findByBeginnaam(Beginnaam beginnaam);
 }
