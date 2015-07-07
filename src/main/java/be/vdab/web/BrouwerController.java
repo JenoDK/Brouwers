@@ -2,10 +2,13 @@ package be.vdab.web;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +26,7 @@ class BrouwerController {
 	private static final String brouwers_VIEW = "brouwers/brouwers";
 	private static final String TOEVOEGEN_VIEW = "brouwers/toevoegen";
 	// private static final String BROUWERS_OP_NAAM_VIEW = "brouwers/beginnaam";
+	private static final String REDIRECT_URL_NA_TOEVOEGEN = "redirect:/brouwers";
 	private static final String ALFABET_VIEW = "brouwers/opalfabet";
 	private static final String BEGINNAAM_VIEW = "brouwers/beginnaam";
 	private final char[] alfabet = new char['Z' - 'A' + 1];
@@ -43,8 +47,17 @@ class BrouwerController {
 	}
 
 	@RequestMapping(value = "toevoegen", method = RequestMethod.GET)
-	String createForm() {
-		return TOEVOEGEN_VIEW;
+	ModelAndView createForm() {
+		return new ModelAndView(TOEVOEGEN_VIEW, "brouwer", new Brouwer());
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public String create(@Valid Brouwer brouwer, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return TOEVOEGEN_VIEW;
+		}
+		brouwerService.create(brouwer);
+		return REDIRECT_URL_NA_TOEVOEGEN;
 	}
 
 	@RequestMapping(value = "opalfabet", method = RequestMethod.GET)
@@ -83,6 +96,11 @@ class BrouwerController {
 	@InitBinder("beginnaam")
 	void initBinderPostcodeReeks(DataBinder dataBinder) {
 		dataBinder.setRequiredFields("beginnaam");
+	}
+
+	@InitBinder("brouwer")
+	void initBinderFiliaal(WebDataBinder binder) {
+		binder.initDirectFieldAccess();
 	}
 
 }
