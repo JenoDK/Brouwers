@@ -40,7 +40,7 @@ public class BrouwerDAOImpl implements BrouwerDAO {
 	public List<Brouwer> findByNaam(String beginNaam) {
 		List<Brouwer> brouwersByNaam = new ArrayList<Brouwer>();
 		for (Map.Entry<Long, Brouwer> entry : brouwers.entrySet()) {
-			if (entry.getValue().getNaam().equals(beginNaam)) {
+			if (entry.getValue().getNaam().substring(0, 1).equals(beginNaam)) {
 				brouwersByNaam.add(entry.getValue());
 			}
 		}
