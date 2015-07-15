@@ -13,7 +13,7 @@ import be.vdab.valueobjects.Adres;
 
 public class Brouwer implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private long brouwerNr;
+	private long id;
 	@NotBlank
 	@Length(min = 1, max = 50)
 	private String naam;
@@ -32,8 +32,8 @@ public class Brouwer implements Serializable {
 		this.adres = adres;
 	}
 
-	public long getBrouwerNr() {
-		return brouwerNr;
+	public long getId() {
+		return id;
 	}
 
 	public String getNaam() {
@@ -48,8 +48,8 @@ public class Brouwer implements Serializable {
 		return adres;
 	}
 
-	public void setBrouwerNr(long brouwerNr) {
-		this.brouwerNr = brouwerNr;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public void setNaam(String naam) {
@@ -64,8 +64,8 @@ public class Brouwer implements Serializable {
 		this.adres = adres;
 	}
 
-	public Brouwer(long brouwerNr, String naam, Integer omzet, Adres adres) {
-		this.brouwerNr = brouwerNr;
+	public Brouwer(long id, String naam, Integer omzet, Adres adres) {
+		this.id = id;
 		this.naam = naam;
 		this.omzet = omzet;
 		this.adres = adres;

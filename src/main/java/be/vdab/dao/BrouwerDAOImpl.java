@@ -1,11 +1,19 @@
 package be.vdab.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import be.vdab.entities.Brouwer;
@@ -16,27 +24,42 @@ import be.vdab.valueobjects.Beginnaam;
 public class BrouwerDAOImpl implements BrouwerDAO {
 
 	private final Map<Long, Brouwer> brouwers = new ConcurrentHashMap<>();
+	private final JdbcTemplate jdbcTemplate;
+	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private final BrouwerRowMapper rowMapper = new BrouwerRowMapper();
+	private final SimpleJdbcInsert simpleJdbcInsert;
+	private static final String BEGIN_SQL = "select id, naam, straat, huisnr, postcode, gemeente, "
+			+ "omzet from brouwers ";
+	private static final String SQL_FIND_ALL = BEGIN_SQL + "order by naam";
+	private static final String SQL_FIND_BY_BEGINNAAM = BEGIN_SQL
+			+ "where naam like :beginnaam order by naam";
 
-	BrouwerDAOImpl() {
-		brouwers.put(1L, new Brouwer(1, "Moortgat", null, new Adres(
-				"Oostterstraat", "15", 9000, "Gent")));
-		brouwers.put(2L, new Brouwer(2, "Duvel", null, new Adres(
-				"Kapellestraat", "27", 9060, "Zelzate")));
-		brouwers.put(3L, new Brouwer(3, "Jupiler", null, new Adres(
-				"Leegstraat", "8", 5500, "Zaventem")));
-		brouwers.put(4L, new Brouwer(4, "Juzeep", null, new Adres(
-				"Leegstraat", "8", 5500, "Zaventem")));
+	@Autowired
+	BrouwerDAOImpl(JdbcTemplate jdbcTemplate,
+			NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+		simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
+		simpleJdbcInsert.withTableName("brouwers");
+		simpleJdbcInsert.usingGeneratedKeyColumns("id");
 	}
 
 	@Override
 	public void create(Brouwer brouwer) {
-		brouwer.setBrouwerNr(Collections.max(brouwers.keySet()) + 1);
-		brouwers.put(brouwer.getBrouwerNr(), brouwer);
+		Map<String, Object> kolomWaarden = new HashMap<>();
+		kolomWaarden.put("naam", brouwer.getNaam());
+		kolomWaarden.put("straat", brouwer.getAdres().getStraat());
+		kolomWaarden.put("huisNr", brouwer.getAdres().getHuisNr());
+		kolomWaarden.put("postcode", brouwer.getAdres().getPostcode());
+		kolomWaarden.put("gemeente", brouwer.getAdres().getGemeente());
+		kolomWaarden.put("omzet", brouwer.getOmzet());
+		Number id = simpleJdbcInsert.executeAndReturnKey(kolomWaarden);
+		brouwer.setId(id.longValue());
 	}
 
 	@Override
 	public List<Brouwer> findAll() {
-		return new ArrayList<Brouwer>(brouwers.values());
+		return jdbcTemplate.query(SQL_FIND_ALL, rowMapper);
 	}
 
 	@Override
@@ -49,16 +72,25 @@ public class BrouwerDAOImpl implements BrouwerDAO {
 		}
 		return brouwersByNaam;
 	}
-	
+
 	@Override
-	public List<Brouwer> findByBeginnaam(Beginnaam beginnaam){
-		List<Brouwer> brouwersByNaam = new ArrayList<Brouwer>();
-		for (Brouwer brouwer : this.brouwers.values()){
-			if (beginnaam.startMet(brouwer.getNaam())){
-				brouwersByNaam.add(brouwer);
-			}
+	public List<Brouwer> findByBeginnaam(Beginnaam beginnaam) {
+		Map<String, String> parameters = Collections.singletonMap("beginnaam", beginnaam.getBeginnaam() + "%");
+		return namedParameterJdbcTemplate.query(SQL_FIND_BY_BEGINNAAM,
+				parameters, rowMapper);
+	}
+
+	private static class BrouwerRowMapper implements RowMapper<Brouwer> {
+		@Override
+		public Brouwer mapRow(ResultSet resultSet, int rowNum)
+				throws SQLException {
+			return new Brouwer(resultSet.getLong("id"),
+					resultSet.getString("naam"), resultSet.getInt("omzet"),
+					new Adres(resultSet.getString("straat"),
+							resultSet.getString("huisNr"),
+							resultSet.getInt("postcode"),
+							resultSet.getString("gemeente")));
 		}
-		return brouwersByNaam;
 	}
 
 }
