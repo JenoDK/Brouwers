@@ -7,12 +7,27 @@
 <body>
 	<v:menu />
 	<h1>Brouwers</h1>
-	<c:forEach items='${brouwers}' var='brouwer'>
+	<c:forEach items='${page.content}' var='brouwer'>
 		<h2>${brouwer.naam}</h2>
 		<p>${brouwer.adres.straat}
 			${brouwer.adres.huisNr}<br> ${brouwer.adres.postcode}
 			${brouwer.adres.gemeente}
 		</p>
 	</c:forEach>
+	<p class='pagineren'><c:forEach var="pageNr" begin="1"
+			end="${page.totalPages}">
+			<c:choose>
+				<c:when test="${pageNr-1 == page.number}">
+					${pageNr}
+				</c:when>
+				<c:otherwise>
+					<c:url value="" var="url">
+						<c:param name="page" value="${pageNr-1}" />
+						<c:param name="sort" value="${param.sort}" />
+					</c:url>
+					<a href="${url}">${pageNr}</a>
+				</c:otherwise>
+			</c:choose>
+		</c:forEach></p>
 </body>
 </html>

@@ -5,6 +5,8 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
@@ -41,9 +43,9 @@ class BrouwerController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	ModelAndView findAll() {
-		return new ModelAndView(brouwers_VIEW, "brouwers",
-				brouwerService.findAll());
+	ModelAndView findAll(@PageableDefault(sort = { "naam" }, size = 5) Pageable pageable) {
+		return new ModelAndView(brouwers_VIEW, "page",
+				brouwerService.findAll(pageable));
 	}
 
 	@RequestMapping(value = "toevoegen", method = RequestMethod.GET)
