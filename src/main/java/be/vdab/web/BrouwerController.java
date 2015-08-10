@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
@@ -23,7 +24,7 @@ import be.vdab.services.BrouwerService;
 import be.vdab.valueobjects.Beginnaam;
 
 @Controller
-@RequestMapping("/brouwers")
+@RequestMapping(value = "/brouwers", produces = MediaType.TEXT_HTML_VALUE)
 class BrouwerController {
 	private static final String brouwers_VIEW = "brouwers/brouwers";
 	private static final String TOEVOEGEN_VIEW = "brouwers/toevoegen";

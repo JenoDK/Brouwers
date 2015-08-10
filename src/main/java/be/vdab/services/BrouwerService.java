@@ -12,6 +12,8 @@ public interface BrouwerService {
 	void create(Brouwer brouwer);
 
 	public Page<Brouwer> findAll(Pageable pageable);
+	
+	List<Brouwer> findAll();
 
 	List<Brouwer> findByNaam(String beginNaam);
 	

@@ -30,6 +30,11 @@ public class BrouwerServiceImpl implements BrouwerService {
 	public Page<Brouwer> findAll(Pageable pageable) {
 		return brouwerDAO.findAll(pageable);
 	}
+	
+	@Override
+	public List<Brouwer> findAll() {
+		return brouwerDAO.findAll();
+	}
 
 	@Override
 	public List<Brouwer> findByNaam(String beginNaam) {

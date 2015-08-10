@@ -1,9 +1,13 @@
 <%@page contentType='text/html' pageEncoding='UTF-8' session='false'%>
 <%@taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core'%>
 <%@taglib prefix='v' uri='http://vdab.be/tags'%>
+<%@taglib prefix='spring' uri='http://www.springframework.org/tags'%>
+<%@taglib prefix='spring' uri='http://www.springframework.org/tags'%>
 <!doctype html>
 <html lang='nl'>
-<head><v:head title='Brouwers' /></head>
+<head>
+<v:head title='Brouwers' />
+</head>
 <body>
 	<v:menu />
 	<h1>Brouwers</h1>
@@ -13,9 +17,13 @@
 			${brouwer.adres.huisNr}<br> ${brouwer.adres.postcode}
 			${brouwer.adres.gemeente}
 		</p>
+		<spring:url value='/temp/{gemeente}/temperatuur' var="tempURL">
+			<spring:param name='gemeente' value='${brouwer.naam}' />
+		</spring:url>
+		<a href='${tempURL}'>Temperatuur</a>
 	</c:forEach>
-	<p class='pagineren'><c:forEach var="pageNr" begin="1"
-			end="${page.totalPages}">
+	<p class='pagineren'>
+		<c:forEach var="pageNr" begin="1" end="${page.totalPages}">
 			<c:choose>
 				<c:when test="${pageNr-1 == page.number}">
 					${pageNr}
@@ -28,6 +36,7 @@
 					<a href="${url}">${pageNr}</a>
 				</c:otherwise>
 			</c:choose>
-		</c:forEach></p>
+		</c:forEach>
+	</p>
 </body>
 </html>
