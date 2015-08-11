@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import be.vdab.dao.BrouwerDAO;
 import be.vdab.entities.Brouwer;
@@ -21,6 +22,7 @@ public class BrouwerServiceImpl implements BrouwerService {
 
 	@Override
 	@ModifyingTransactionalServiceMethod
+	@PreAuthorize("hasAuthority('admin')")
 	public void create(Brouwer brouwer) {
 		brouwer.setId(brouwerDAO.save(brouwer).getId());
 
